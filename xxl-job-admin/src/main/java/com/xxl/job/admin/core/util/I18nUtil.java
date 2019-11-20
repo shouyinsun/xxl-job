@@ -23,7 +23,7 @@ public class I18nUtil {
     private static Logger logger = LoggerFactory.getLogger(I18nUtil.class);
 
     private static Properties prop = null;
-    public static Properties loadI18nProp(){
+    public static Properties loadI18nProp(){//load 国际化配置文件
         if (prop != null) {
             return prop;
         }

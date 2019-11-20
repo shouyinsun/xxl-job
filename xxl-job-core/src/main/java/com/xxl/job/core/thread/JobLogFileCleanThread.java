@@ -58,6 +58,7 @@ public class JobLogFileCleanThread {
                                 if (!childFile.isDirectory()) {
                                     continue;
                                 }
+                                //2017-12-25 形式
                                 if (childFile.getName().indexOf("-") == -1) {
                                     continue;
                                 }

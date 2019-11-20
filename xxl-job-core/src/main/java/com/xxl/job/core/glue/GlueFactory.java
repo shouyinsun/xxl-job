@@ -24,7 +24,7 @@ public class GlueFactory {
 	public static void refreshInstance(int type){
 		if (type == 0) {
 			glueFactory = new GlueFactory();
-		} else if (type == 1) {
+		} else if (type == 1) {//SpringGlueFactory 脚本中可以注入bean
 			glueFactory = new SpringGlueFactory();
 		}
 	}
@@ -50,6 +50,7 @@ public class GlueFactory {
 				Object instance = clazz.newInstance();
 				if (instance!=null) {
 					if (instance instanceof IJobHandler) {
+						//子类,SpringGlueFactory 注解属性注入
 						this.injectService(instance);
 						return (IJobHandler) instance;
 					} else {

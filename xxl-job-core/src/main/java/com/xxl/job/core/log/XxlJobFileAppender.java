@@ -33,7 +33,9 @@ public class XxlJobFileAppender {
 	 * 	---/2017-12-25/821.log
 	 *
 	 */
+	//log base路径
 	private static String logBasePath = "/data/applogs/xxl-job/jobhandler";
+	//glue source
 	private static String glueSrcPath = logBasePath.concat("/gluesource");
 	public static void initLogPath(String logPath){
 		// init
@@ -68,6 +70,7 @@ public class XxlJobFileAppender {
 	 * @param logId
 	 * @return
 	 */
+	// 触发日期/logId.log
 	public static String makeLogFileName(Date triggerDate, long logId) {
 
 		// filePath/yyyy-MM-dd
@@ -159,7 +162,7 @@ public class XxlJobFileAppender {
 		try {
 			//reader = new LineNumberReader(new FileReader(logFile));
 			reader = new LineNumberReader(new InputStreamReader(new FileInputStream(logFile), "utf-8"));
-			String line = null;
+			String line ;
 
 			while ((line = reader.readLine())!=null) {
 				toLineNum = reader.getLineNumber();		// [from, to], start as 1

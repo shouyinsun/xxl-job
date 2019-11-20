@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by xuxueli on 17/3/2.
+ *
+ * 守护线程 注册执行器信息到admin
  */
 public class ExecutorRegistryThread {
     private static Logger logger = LoggerFactory.getLogger(ExecutorRegistryThread.class);
@@ -67,6 +69,7 @@ public class ExecutorRegistryThread {
 
                     try {
                         if (!toStop) {
+                            //sleep 30s
                             TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
                         }
                     } catch (InterruptedException e) {
@@ -76,7 +79,7 @@ public class ExecutorRegistryThread {
                     }
                 }
 
-                // registry remove
+                // 停止 移除注册信息
                 try {
                     RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appName, address);
                     for (AdminBiz adminBiz: XxlJobExecutor.getAdminBizList()) {

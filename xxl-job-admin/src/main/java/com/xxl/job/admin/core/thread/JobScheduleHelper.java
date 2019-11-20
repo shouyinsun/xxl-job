@@ -63,6 +63,7 @@ public class JobScheduleHelper {
 
                         conn = XxlJobAdminConfig.getAdminConfig().getDataSource().getConnection();
                         connAutoCommit = conn.getAutoCommit();
+                        //自动提交 false
                         conn.setAutoCommit(false);
 
                         preparedStatement = conn.prepareStatement(  "select * from xxl_job_lock where lock_name = 'schedule_lock' for update" );
@@ -99,6 +100,7 @@ public class JobScheduleHelper {
                                     long nextTime = cronExpression.getNextValidTimeAfter(new Date()).getTime();
 
                                     // 1、trigger
+                                    // 触发任务,肯定要扔线程池里
                                     JobTriggerPoolHelper.trigger(jobInfo.getId(), TriggerTypeEnum.CRON, -1, null, null);
                                     logger.debug(">>>>>>>>>>> xxl-job, shecule push trigger : jobId = " + jobInfo.getId() );
 
@@ -297,7 +299,7 @@ public class JobScheduleHelper {
         // push async ring
         List<Integer> ringItemData = ringData.get(ringSecond);
         if (ringItemData == null) {
-            ringItemData = new ArrayList<Integer>();
+            ringItemData = new ArrayList();
             ringData.put(ringSecond, ringItemData);
         }
         ringItemData.add(jobId);

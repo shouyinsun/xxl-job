@@ -6,6 +6,14 @@ import com.xxl.job.admin.core.util.I18nUtil;
  * trigger type enum
  *
  * @author xuxueli 2018-09-16 04:56:41
+ *
+ * 任务触发类型
+ *
+ * cron=Cron触发
+ * manual=手动触发
+ * parent=父任务触发
+ * api=API触发
+ * retry=失败重试触发
  */
 public enum TriggerTypeEnum {
 

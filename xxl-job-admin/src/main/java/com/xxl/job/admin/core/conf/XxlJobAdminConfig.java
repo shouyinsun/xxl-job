@@ -17,16 +17,21 @@ import javax.sql.DataSource;
  * xxl-job config
  *
  * @author xuxueli 2017-04-28
+ *
+ * job管理配置
  */
 @Component
 public class XxlJobAdminConfig implements InitializingBean{
     private static XxlJobAdminConfig adminConfig = null;
+    //静态方法,获取当前自身
     public static XxlJobAdminConfig getAdminConfig() {
         return adminConfig;
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        //afterPropertiesSet
+        // 初始化后当前对象赋给静态属性
         adminConfig = this;
     }
 
@@ -54,6 +59,8 @@ public class XxlJobAdminConfig implements InitializingBean{
     private AdminBiz adminBiz;
     @Resource
     private JavaMailSender mailSender;
+
+    //dataSource 自动配置
     @Resource
     private DataSource dataSource;
 

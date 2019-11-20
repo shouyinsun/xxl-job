@@ -42,9 +42,11 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         // init i18n
+        // 初始化国际化
         initI18n();
 
         // admin registry monitor run
+        // executor 注册监视器,清理过期和更新jobGroup的online地址信息
         JobRegistryMonitorHelper.getInstance().start();
 
         // admin monitor run
@@ -54,6 +56,7 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
         initRpcProvider();
 
         // start-schedule
+        // 启动调度线程
         JobScheduleHelper.getInstance().start();
 
         logger.info(">>>>>>>>> init xxl-job admin success.");
@@ -100,7 +103,7 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
                 null,
                 null);
 
-        // add services
+        // add services  AdminBiz  -> AdminBizImpl
         xxlRpcProviderFactory.addService(AdminBiz.class.getName(), null, XxlJobAdminConfig.getAdminConfig().getAdminBiz());
 
         // servlet handler
@@ -109,6 +112,8 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
     private void stopRpcProvider() throws Exception {
         XxlRpcInvokerFactory.getInstance().stop();
     }
+    //servletServerHandler 使用 xxlRpcProviderFactory 中serviceData
+    //反序列化解析request内容,根据类名获取map中对应的service,反射调用
     public static void invokeAdminService(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         servletServerHandler.handle(null, request, response);
     }
@@ -130,6 +135,7 @@ public class XxlJobScheduler implements InitializingBean, DisposableBean {
         }
 
         // set-cache
+        // 代理类
         executorBiz = (ExecutorBiz) new XxlRpcReferenceBean(
                 NetEnum.NETTY_HTTP,
                 Serializer.SerializeEnum.HESSIAN.getSerializer(),

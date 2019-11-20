@@ -28,6 +28,8 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by xuxueli on 2016/3/2 21:14.
+ *
+ * job 执行器
  */
 public class XxlJobExecutor  {
     private static final Logger logger = LoggerFactory.getLogger(XxlJobExecutor.class);
@@ -67,22 +69,26 @@ public class XxlJobExecutor  {
     // ---------------------- start + stop ----------------------
     public void start() throws Exception {
 
-        // init logpath
+        // log 路径
         XxlJobFileAppender.initLogPath(logPath);
 
         // init invoker, admin-client
+        // adminBizList
         initAdminBizList(adminAddresses, accessToken);
 
 
         // init JobLogFileCleanThread
+        // 按日期清理log
         JobLogFileCleanThread.getInstance().start(logRetentionDays);
 
         // init TriggerCallbackThread
+        //callBackQueue 调用 adminBiz.callback
         TriggerCallbackThread.getInstance().start();
 
         // init executor-server
         port = port>0?port: NetUtil.findAvailablePort(9999);
         ip = (ip!=null&&ip.trim().length()>0)?ip: IpUtil.getIp();
+        //rpc provider 初始化
         initRpcProvider(ip, port, appName, accessToken);
     }
     public void destroy(){
@@ -114,29 +120,34 @@ public class XxlJobExecutor  {
     private static List<AdminBiz> adminBizList;
     private static Serializer serializer;
     private void initAdminBizList(String adminAddresses, String accessToken) throws Exception {
+        //hessian2 序列化
         serializer = Serializer.SerializeEnum.HESSIAN.getSerializer();
         if (adminAddresses!=null && adminAddresses.trim().length()>0) {
             for (String address: adminAddresses.trim().split(",")) {
                 if (address!=null && address.trim().length()>0) {
 
+                    //{address}/api
                     String addressUrl = address.concat(AdminBiz.MAPPING);
 
+                    //rpc reference bean
                     AdminBiz adminBiz = (AdminBiz) new XxlRpcReferenceBean(
+                            //http方式
                             NetEnum.NETTY_HTTP,
                             serializer,
-                            CallType.SYNC,
+                            CallType.SYNC,//同步
                             LoadBalance.ROUND,
-                            AdminBiz.class,
+                            AdminBiz.class,//interface
                             null,
                             3000,
+                            //addressUrl 为空,就去注册中心上取,有多个就负载,不为空,直接使用地址调用
                             addressUrl,
                             accessToken,
                             null,
                             null
-                    ).getObject();
+                    ).getObject();//getObject生成代理类
 
                     if (adminBizList == null) {
-                        adminBizList = new ArrayList<AdminBiz>();
+                        adminBizList = new ArrayList();
                     }
                     adminBizList.add(adminBiz);
                 }
@@ -171,6 +182,8 @@ public class XxlJobExecutor  {
         serviceRegistryParam.put("address", address);
 
         xxlRpcProviderFactory = new XxlRpcProviderFactory();
+        //netty 的 http
+        //ExecutorServiceRegistry 不注册信息
         xxlRpcProviderFactory.initConfig(NetEnum.NETTY_HTTP, Serializer.SerializeEnum.HESSIAN.getSerializer(), ip, port, accessToken, ExecutorServiceRegistry.class, serviceRegistryParam);
 
         // add services

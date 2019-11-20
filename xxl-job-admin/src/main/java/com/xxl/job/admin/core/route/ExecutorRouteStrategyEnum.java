@@ -5,6 +5,19 @@ import com.xxl.job.admin.core.util.I18nUtil;
 
 /**
  * Created by xuxueli on 17/3/10.
+ *
+ * 路由策略：
+ *
+ * first=第一个
+ * last=最后一个
+ * round=轮询
+ * random=随机
+ * consistenthash=一致性HASH
+ * lfu=最不经常使用
+ * lru=最近最久未使用
+ * failover=故障转移
+ * busyover=忙碌转移
+ * shard=分片广播
  */
 public enum ExecutorRouteStrategyEnum {
 

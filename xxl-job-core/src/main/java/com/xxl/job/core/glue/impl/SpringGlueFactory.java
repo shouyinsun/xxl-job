@@ -24,7 +24,7 @@ public class SpringGlueFactory extends GlueFactory {
      * @param instance
      */
     @Override
-    public void injectService(Object instance){
+    public void injectService(Object instance){//属性的注入
         if (instance==null) {
             return;
         }

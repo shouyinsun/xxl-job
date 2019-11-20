@@ -20,7 +20,7 @@ public class JobTriggerPoolHelper {
     // ---------------------- trigger pool ----------------------
 
     // fast/slow thread pool
-    private ThreadPoolExecutor fastTriggerPool = new ThreadPoolExecutor(
+    private ThreadPoolExecutor fastTriggerPool = new ThreadPoolExecutor(//快线程池
             50,
             200,
             60L,
@@ -33,7 +33,7 @@ public class JobTriggerPoolHelper {
                 }
             });
 
-    private ThreadPoolExecutor slowTriggerPool = new ThreadPoolExecutor(
+    private ThreadPoolExecutor slowTriggerPool = new ThreadPoolExecutor(//慢线程池
             10,
             100,
             60L,
@@ -60,7 +60,9 @@ public class JobTriggerPoolHelper {
         // choose thread pool
         ThreadPoolExecutor triggerPool_ = fastTriggerPool;
         AtomicInteger jobTimeoutCount = jobTimeoutCountMap.get(jobId);
-        if (jobTimeoutCount!=null && jobTimeoutCount.get() > 10) {      // job-timeout 10 times in 1 min
+        // job-timeout 10 times in 1 min
+        // use the slow thread pool
+        if (jobTimeoutCount!=null && jobTimeoutCount.get() > 10) {
             triggerPool_ = slowTriggerPool;
         }
 

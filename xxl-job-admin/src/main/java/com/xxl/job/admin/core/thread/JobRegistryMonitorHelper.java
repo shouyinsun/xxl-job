@@ -16,6 +16,11 @@ import java.util.concurrent.TimeUnit;
 /**
  * job registry instance
  * @author xuxueli 2016-10-02 19:10:24
+ *
+ *
+ * job执行器注册 监视线程
+ *
+ * 移除过期的执行器并更新jobGroup的地址信息
  */
 public class JobRegistryMonitorHelper {
 	private static Logger logger = LoggerFactory.getLogger(JobRegistryMonitorHelper.class);
@@ -34,25 +39,28 @@ public class JobRegistryMonitorHelper {
 				while (!toStop) {
 					try {
 						// auto registry group
+						//执行器地址类型,0=自动注册、1=手动录入
 						List<XxlJobGroup> groupList = XxlJobAdminConfig.getAdminConfig().getXxlJobGroupDao().findByAddressType(0);
 						if (groupList!=null && !groupList.isEmpty()) {
 
 							// remove dead address (admin/executor)
+							// jobRegistry中 移除最后更新时间前于配置过期时间
 							List<Integer> ids = XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().findDead(RegistryConfig.DEAD_TIMEOUT);
 							if (ids!=null && ids.size()>0) {
 								XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().removeDead(ids);
 							}
 
 							// fresh online address (admin/executor)
-							HashMap<String, List<String>> appAddressMap = new HashMap<String, List<String>>();
+							HashMap<String, List<String>> appAddressMap = new HashMap();
 							List<XxlJobRegistry> list = XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().findAll(RegistryConfig.DEAD_TIMEOUT);
 							if (list != null) {
 								for (XxlJobRegistry item: list) {
+									//执行器类型
 									if (RegistryConfig.RegistType.EXECUTOR.name().equals(item.getRegistryGroup())) {
 										String appName = item.getRegistryKey();
 										List<String> registryList = appAddressMap.get(appName);
 										if (registryList == null) {
-											registryList = new ArrayList<String>();
+											registryList = new ArrayList();
 										}
 
 										if (!registryList.contains(item.getRegistryValue())) {

@@ -42,7 +42,7 @@ public class JobThread extends Thread{
 	public JobThread(int jobId, IJobHandler handler) {
 		this.jobId = jobId;
 		this.handler = handler;
-		this.triggerQueue = new LinkedBlockingQueue<TriggerParam>();
+		this.triggerQueue = new LinkedBlockingQueue();
 		this.triggerLogIdSet = Collections.synchronizedSet(new HashSet<Long>());
 	}
 	public IJobHandler getHandler() {
@@ -59,7 +59,7 @@ public class JobThread extends Thread{
 		// avoid repeat
 		if (triggerLogIdSet.contains(triggerParam.getLogId())) {
 			logger.info(">>>>>>>>>>> repeate trigger job, logId:{}", triggerParam.getLogId());
-			return new ReturnT<String>(ReturnT.FAIL_CODE, "repeate trigger job, logId:" + triggerParam.getLogId());
+			return new ReturnT(ReturnT.FAIL_CODE, "repeate trigger job, logId:" + triggerParam.getLogId());
 		}
 
 		triggerLogIdSet.add(triggerParam.getLogId());
@@ -101,7 +101,7 @@ public class JobThread extends Thread{
 		}
 
 		// execute
-		while(!toStop){
+		while(!toStop){//死循环从阻塞队列获取执行
 			running = false;
 			idleTimes++;
 

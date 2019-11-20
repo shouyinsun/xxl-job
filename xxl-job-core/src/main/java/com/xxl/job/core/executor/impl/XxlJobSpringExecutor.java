@@ -22,6 +22,7 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
     public void start() throws Exception {
 
         // init JobHandler Repository
+        // application context 中获取所有 @JobHandler
         initJobHandlerRepository(applicationContext);
 
         // refresh GlueFactory
